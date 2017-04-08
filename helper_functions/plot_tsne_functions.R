@@ -55,7 +55,7 @@
       if (centralMeasure=="mean"){
         if (showLabels){
           ggplot(NULL, aes(x,y)) +
-            geom_point(data=tsne_points_filter,aes(color = eval(parse(text=colIndicator))),size=2) +
+            geom_point(data=tsne_points_filter,aes(color = eval(parse(text=colIndicator))),size=3) +
             scale_color_gradient2(midpoint=mean(eval(parse(text=paste0("tsne_points_filter$",colIndicator)))), low="blue", mid="white",high="red")+
             geom_point(data=tsne_points_filter_out,color=alpha("lightgrey",0.1)) + 
             geom_text(data=tsne_points_filter,aes(label=str_wrap(paste0(Country," (",Period,")"))),color="grey",nudge_y=0.1)+
@@ -72,7 +72,7 @@
                   axis.ticks = element_blank())
         } else {
           ggplot(NULL, aes(x,y)) +
-            geom_point(data=tsne_points_filter,aes(color = eval(parse(text=colIndicator))),size=2) +
+            geom_point(data=tsne_points_filter,aes(color = eval(parse(text=colIndicator))),size=3) +
             scale_color_gradient2(midpoint=mean(eval(parse(text=paste0("tsne_points_filter$",colIndicator)))), low="blue", mid="white",high="red")+
             geom_point(data=tsne_points_filter_out,color=alpha("lightgrey",0.1)) + 
             theme(#legend.key=element_blank(),
@@ -90,7 +90,7 @@
       } else{
         if (showLabels){
           ggplot(NULL, aes(x,y)) +
-            geom_point(data=tsne_points_filter,aes(color = eval(parse(text=colIndicator))),size=2) +
+            geom_point(data=tsne_points_filter,aes(color = eval(parse(text=colIndicator))),size=3) +
             scale_color_gradient2(midpoint=median(eval(parse(text=paste0("tsne_points_filter$",colIndicator)))), low="blue", mid="white",high="red")+
             geom_point(data=tsne_points_filter_out,color=alpha("lightgrey",0.1)) + 
             geom_text(data=tsne_points_filter,aes(label=str_wrap(paste0(Country," (",Period,")"))),color="grey",nudge_y=0.1)+
@@ -107,7 +107,7 @@
                   axis.ticks = element_blank())
         } else{
           ggplot(NULL, aes(x,y)) +
-            geom_point(data=tsne_points_filter,aes(color = eval(parse(text=colIndicator))),size=2) +
+            geom_point(data=tsne_points_filter,aes(color = eval(parse(text=colIndicator))),size=3) +
             scale_color_gradient2(midpoint=median(eval(parse(text=paste0("tsne_points_filter$",colIndicator)))), low="blue", mid="white",high="red")+
             geom_point(data=tsne_points_filter_out,color=alpha("lightgrey",0.1)) + 
             theme(legend.key=element_blank(),
@@ -124,14 +124,14 @@
         }
       }
       
-    } else {
+    } else { # no indicator selected to color the dots
       
       if (showLabels){ # show names and year of countries
         ggplot(NULL, aes(x,y)) +  
           #geom_point(data=tsne_points_filter,aes(group=Country,color = Country),size=2) +
-          geom_point(data=tsne_points_filter,aes(color = group),size=2) +
+          geom_point(data=tsne_points_filter,aes(color = group),size=3) +
           geom_point(data=tsne_points_filter_out,color=alpha("lightgrey",0.1)) +
-          geom_point(data=centroid,color="red",size=3) + 
+          geom_point(data=centroid,color="red",size=4) + 
           geom_text(data=tsne_points_filter,aes(label=str_wrap(paste0(Country," (",Period,")"))),color="grey",nudge_y=0.1)+
           theme(legend.key=element_blank(),
                 legend.title=element_blank(),
@@ -146,9 +146,9 @@
                 axis.ticks = element_blank())
       } else {
         ggplot(NULL, aes(x,y)) +  
-          geom_point(data=tsne_points_filter,aes(color = group),size=2) +
+          geom_point(data=tsne_points_filter,aes(color = group),size=3) +
           geom_point(data=tsne_points_filter_out,color=alpha("lightgrey",0.1)) +
-          geom_point(data=centroid,color="red",size=3) + 
+          geom_point(data=centroid,color="red",size=4) + 
           theme(legend.key=element_blank(),
                 legend.title=element_blank(),
                 legend.text = element_text(size = 15),
