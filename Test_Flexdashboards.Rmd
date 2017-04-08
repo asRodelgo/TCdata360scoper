@@ -86,7 +86,8 @@ library(shinyBS)
 plotOutput('plotTSNE', height = "650px",
            hover = hoverOpts("plot_hover", delay = 100, delayType = "debounce"),
            click = clickOpts("plot_click"),
-           brush = brushOpts("plot_brush", delay = 100, delayType = "debounce"),
+           #brush = brushOpts("plot_brush", delay = 100, delayType = "debounce"),
+           brush = "plot_brush",
            dblclick = "plot_dblclick")
 uiOutput("hover_info")
 uiOutput("click_info")
@@ -113,6 +114,20 @@ output$plotTSNE <- renderPlot({
 # When a double-click happens, check if there's a brush on the plot.
 # If so, zoom to the brush bounds; if not, reset the zoom.
 observeEvent(input$plot_dblclick, {
+  brush <- input$plot_brush
+  if (!is.null(brush)) {
+    ranges$x <- c(brush$xmin, brush$xmax)
+    ranges$y <- c(brush$ymin, brush$ymax)
+    
+  } else {
+    ranges$x <- NULL
+    ranges$y <- NULL
+  }
+})
+
+# When a brush happens, check if there's a brush on the plot.
+# If so, zoom to the brush bounds; if not, do nothing.
+observeEvent(input$plot_brush, {
   brush <- input$plot_brush
   if (!is.null(brush)) {
     ranges$x <- c(brush$xmin, brush$xmax)

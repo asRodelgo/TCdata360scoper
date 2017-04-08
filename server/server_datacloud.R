@@ -29,6 +29,20 @@ observeEvent(input$plot_dblclick, {
   }
 })
 
+# When a brush happens, check if there's a brush on the plot.
+# If so, zoom to the brush bounds; if not, do nothing.
+observeEvent(input$plot_brush, {
+  brush <- input$plot_brush
+  if (!is.null(brush)) {
+    ranges$x <- c(brush$xmin, brush$xmax)
+    ranges$y <- c(brush$ymin, brush$ymax)
+    
+  } else {
+    ranges$x <- NULL
+    ranges$y <- NULL
+  }
+})
+
 # tooltip hover over scatterplot points: see https://gitlab.com/snippets/16220
 output$hover_info <- renderUI({
   hover <- input$plot_hover
