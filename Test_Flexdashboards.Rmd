@@ -176,7 +176,7 @@ output$hover_info <- renderUI({
   # background color is set so tooltip is a bit transparent
   # z-index is set so we are sure are tooltip will be on top
   style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.85); ",
-                  "left:", left_px + 2, "px; top:", top_px + 2, "px;")
+                  "left:", left_px + 12, "px; top:", top_px + 12, "px;")
   
   # actual tooltip created as wellPanel
   panel_input <- ""
@@ -232,7 +232,7 @@ output$click_info <- renderUI({
   # create style property fot tooltip
   # background color is set so tooltip is a bit transparent
   # z-index is set so we are sure are tooltip will be on top
-  style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.85); ",
+  style <- paste0("position:absolute; z-index:10; background-color: rgba(245, 245, 245, 0.85); ",
                   "left:", left_px + 2, "px; top:", top_px + 2, "px;")
   # actual tooltip created as wellPanel
   panel_input <- paste0('Closest 10 Economies (Eucl. dist.) to ','<a href=',country_url,filter(countries, name==tableTop10$Country[1])$iso3,' target="_blank" >',tableTop10$Country[1],' (',tableTop10$Period[1],')</a><br/><br/>')
