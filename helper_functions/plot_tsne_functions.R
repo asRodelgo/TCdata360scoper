@@ -20,7 +20,8 @@
     if (grepl("Missing",colIndicator)) {
       colIndicator <- "missing_values"
     } else {
-      colIndicator <- paste0("X",filter(indicators_1_2, name %in% colIndicator)$id)
+      #colIndicator <- paste0("X",filter(indicators_1_2, name %in% colIndicator)$id)
+      colIndicator <- paste0("X",unique(filter(data_attributes, Series_Name %in% colIndicator)$Series_Code))
     }
   }
     #

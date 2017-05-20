@@ -13,15 +13,16 @@
   if (length(tsne_ready)>0){ # if data do stuff
     if (!is.null(selected_indicators)){  # if at least 1 selected indicator
       # map indicator labels to codes
-      selected_indicators <- paste0("X",filter(indicators_1_2, name %in% selected_indicators)$id)
+      #selected_indicators <- paste0("X",filter(indicators_1_2, name %in% selected_indicators)$id)
+      selected_indicators <- paste0("X",unique(filter(data_attributes, Series_Name %in% selected_indicators)$Series_Code))
       #
       tsne_ready_select <- tsne_ready %>%
-        dplyr::select(iso3, Period, Region, 
+        dplyr::select(main_object, Period, Region, 
                       IncomeLevel, Country, x, y, 
                       one_of(selected_indicators))
     } else { # no selected indicators    
       tsne_ready_select <- tsne_ready %>%
-        dplyr::select(iso3, Period, Region, 
+        dplyr::select(main_object, Period, Region, 
                       IncomeLevel, Country, x, y)
     }  
     # General Filters
@@ -57,17 +58,19 @@
 
   if (length(tsne_ready)>0){ # if data do stuff
     #datascope_filter <- .filter_datascope()
-    tsne_points_filter <- inner_join(tsne_ready[,c("iso3","Period","x","y","missing_values")],datascope_filter, by=c("iso3","Period")) %>%
+    tsne_points_filter <- inner_join(tsne_ready[,c("main_object","Period","x","y","missing_values")],mutate(data_filter, Period = as.character(Period)), by=c("main_object","Period")) %>%
       filter(Country %in% colCountry & Region %in% colRegion & Period %in% colPeriod) %>%
-      dplyr::select(id,Period,Observation,Country,x,y) %>%
-      distinct(Country,Period,id, .keep_all=TRUE)
+      dplyr::select(indicatorID,Period,Observation,Country,x,y) %>%
+      distinct(Country,Period,indicatorID, .keep_all=TRUE)
     
-    tsne_points_filter$id <- paste0("X",tsne_points_filter$id)
-    these_indicators <- paste0("X",filter(indicators_1_2, name %in% selected_indicators)$id)
+    
+    tsne_points_filter$indicatorID <- paste0("X",tsne_points_filter$indicatorID)
+    #these_indicators <- paste0("X",filter(indicators_1_2, name %in% selected_indicators)$id)
+    these_indicators <- paste0("X",unique(filter(data_attributes, Series_Name %in% selected_indicators)$Series_Code))
     
     tsne_points_filter <- tsne_points_filter %>%
       #group_by(Country,Period) %>%
-      spread(id,Observation) %>%
+      spread(indicatorID,Observation) %>%
       select(Country,Period,one_of(these_indicators),x,y) %>%
       mutate_at(vars(num_range("X",1:5000)), funs(round(.,2))) %>%
       #select(-Indicator) %>%
@@ -88,12 +91,12 @@
   
   if (length(tsne_ready)>0){ # if data do stuff
     #datascope_filter <- .filter_datascope()
-    tsne_points_filter <- inner_join(tsne_ready[,c("iso3","Period","x","y","missing_values")],datascope_filter, by=c("iso3","Period")) %>%
+    tsne_points_filter <- inner_join(tsne_ready[,c("main_object","Period","x","y","missing_values")],mutate(data_filter, Period = as.character(Period)), by=c("main_object","Period")) %>%
       filter(Country %in% colCountry & Region %in% colRegion & Period %in% colPeriod) %>%
-      dplyr::select(id,Period,Observation,Country,x,y) %>%
-      distinct(Country,Period,id, .keep_all=TRUE)
+      dplyr::select(indicatorID,Period,Observation,Country,x,y) %>%
+      distinct(Country,Period,indicatorID, .keep_all=TRUE)
     
-     tsne_points_filter$id <- paste0("X",tsne_points_filter$id)
+     tsne_points_filter$indicatorID <- paste0("X",tsne_points_filter$indicatorID)
     
     #write.csv(tsne_points_filter, "data/hover_data.csv", row.names=FALSE)
   } else{ return()}
@@ -102,16 +105,16 @@
 }
 
 # filter datascope original data
-.filter_datascope <- function(){
+.filter_datascope <- function(data){
   
-  data_filter <- datascope %>%
-    gather(Period,Observation,-iso3,-id) %>%
-    inner_join(indicators_1_2, by="id") %>%
-    dplyr::select(iso3,id,Period,Observation,Indicator=name) %>%
-    distinct(iso3, Period, Indicator, .keep_all=TRUE) %>%
-    mutate(Period = gsub("X","",Period)) %>%
+  data_filter <- data %>%
+    gather(Period,Observation,-main_object,-indicatorID) %>%
+    #inner_join(indicators_1_2, by="id") %>%
+    dplyr::select(main_object,indicatorID,Period,Observation) %>%
+    distinct(main_object, Period, indicatorID, .keep_all=TRUE) %>%
+    mutate(Period = as.character(gsub("X","",Period))) %>%
     inner_join(select(countries,iso3,Country=name,Region=region,IncomeLevel=incomeLevel),
-               by="iso3")
+               by=c("main_object"="iso3"))
  
   return(data_filter) 
   

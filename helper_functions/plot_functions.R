@@ -308,31 +308,31 @@
   #set.seed(123) # to fix the jitter across different plots
   # cloud of points on top of boxplots
   tsne_points_filter <- as.data.frame(.tSNE_plot_filter(colRegion,colPeriod,colCountry,selected_indicators))
-  tsne_points_filter <- gather(tsne_points_filter, indicator, value, -iso3,-Country,
+  tsne_points_filter <- gather(tsne_points_filter, indicator, value, -main_object,-Country,
                                -IncomeLevel,-Region,-Period,-x,-y,-group) %>%
     distinct(Country, Period, indicator, .keep_all=TRUE)
   tsne_points_filter$indicator <- gsub("X","",tsne_points_filter$indicator)
-  tsne_points_filter <- merge(tsne_points_filter,indicators_1_2[,c("id","name")], by.x="indicator",by.y="id",all.x = TRUE) 
+  tsne_points_filter <- merge(tsne_points_filter,data_attributes[,c("Series_Code","Series_Name")], by.x="indicator",by.y="Series_Code",all.x = TRUE) 
   tsne_points_filter <- tsne_points_filter %>%
     select(-indicator) %>%
-    select(indicator = name, everything())
+    select(indicator = Series_Name, everything())
   tsne_points_filter$indicator <- gsub("_"," ",tsne_points_filter$indicator)
   tsne_points_filter$indicator <- str_wrap(tsne_points_filter$indicator, width = 20)  
   tsne_points_filter$group <- str_wrap(tsne_points_filter$group,width=12)
   
   # boxplots
-  selected_indicators_codes <- paste0("X",filter(indicators_1_2, name %in% selected_indicators)$id)
-  tsne_ready_gather <- gather(tsne_ready, indicator, value, -iso3,-Country,
+  selected_indicators_codes <- paste0("X",unique(filter(data_attributes, Series_Name %in% selected_indicators)$Series_Code))
+  tsne_ready_gather <- gather(tsne_ready, indicator, value, -main_object,-Country,
                               -IncomeLevel,-Region,-Period,-x,-y) %>%
     filter(indicator %in% selected_indicators_codes) %>%
     mutate(value = as.numeric(value)) %>%
     distinct(Country, Period, indicator, .keep_all=TRUE)
   
   tsne_ready_gather$indicator <- gsub("X","",tsne_ready_gather$indicator)
-  tsne_ready_gather <- merge(tsne_ready_gather,indicators_1_2[,c("id","name")], by.x="indicator",by.y="id",all.x = TRUE) 
+  tsne_ready_gather <- merge(tsne_ready_gather,data_attributes[,c("Series_Code","Series_Name")], by.x="indicator",by.y="Series_Code",all.x = TRUE) 
   tsne_ready_gather <- tsne_ready_gather %>%
     select(-indicator) %>%
-    select(indicator = name, everything())
+    select(indicator = Series_Name, everything())
   tsne_ready_gather$indicator <- gsub("_"," ",tsne_ready_gather$indicator)
   tsne_ready_gather$indicator <- str_wrap(tsne_ready_gather$indicator, width = 20)
   extremes_high <- tsne_ready_gather %>%
@@ -358,10 +358,10 @@
       brushPoints <- dplyr::select(brushPoints,group,one_of(selected_indicators_codes))
       brushPoints <- gather(brushPoints, indicator, value, -group)
       brushPoints$indicator <- gsub("X","",brushPoints$indicator)
-      brushPoints <- merge(brushPoints,indicators_1_2[,c("id","name")], by.x="indicator",by.y="id",all.x = TRUE) 
+      brushPoints <- merge(brushPoints,data_attributes[,c("Series_Code","Series_Name")], by.x="indicator",by.y="Series_Code",all.x = TRUE) 
       brushPoints <- brushPoints %>%
         select(-indicator) %>%
-        select(indicator = name, everything())
+        select(indicator = Series_Name, everything())
       brushPoints$indicator <- gsub("_"," ",brushPoints$indicator)
       brushPoints$indicator <- str_wrap(brushPoints$indicator, width = 20)
       brushPoints$group <- str_wrap(brushPoints$group,width=12)
@@ -446,7 +446,8 @@
 .summary_brush <- function(brushedP,selected_indicators){
   
 #   tsne_points_filter$id <- paste0("X",brushedP$id)
-  these_indicators <- paste0("X",filter(indicators_1_2, name %in% selected_indicators)$id)
+  #these_indicators <- paste0("X",filter(indicators_1_2, name %in% selected_indicators)$id)
+  these_indicators <- paste0("X",unique(filter(data_attributes, Series_Name %in% selected_indicators)$Series_Code))
   #brushedP <- tsne_points_filter
   tsne_points_mean <- tsne_points_filter %>%
     filter(id %in% these_indicators) %>%

@@ -1,17 +1,18 @@
 # -------- Writers don't run when the app is called. They are used for pre-processing
 
 # TSNE writer
-.generateTSNE <- function(){
+.generateTSNE <- function(data, periodMin = "1900", periodMax = "2100", 
+                          num_iter = 500, max_num_neighbors = 10, num_epochs = 100){
   
-  datascope <- read.csv("data/datascope.csv", stringsAsFactors = FALSE)
+  #datascope <- read.csv("data/datascope.csv", stringsAsFactors = FALSE)
   
-  data_tsne <- .prepare_data()
+  data_tsne <- .prepare_data(data)
   
-  data_tsne_sample <- filter(data_tsne, Period > "1995" & Period < "2017")
+  data_tsne_sample <- filter(data_tsne, Period > periodMin & Period < periodMax)
   
   if (nrow(data_tsne)>0){
-    num_iter <- 500
-    max_num_neighbors <- 50
+    #num_iter <- 500
+    #max_num_neighbors <- 50
     set.seed(456) # reproducitility
     tsne_points <- tsne(data_tsne_sample[,!sapply(data_tsne, is.character)], 
                         max_iter=as.numeric(num_iter), 

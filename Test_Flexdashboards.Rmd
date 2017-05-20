@@ -42,35 +42,35 @@ tagList(
   #splitLayout(cellWidths = rep("33%", 3),
   selectizeInput('colPeriod', 'Period:', choices=c("All",sort(unique(data_tsne_sample$Period))),
                  selected=NULL,multiple=TRUE,options = list(maxItems = 5,dropdownParent = 'body')),
-  selectizeInput('colRegion', 'Region:', choices=c("All",sort(unique(data_tsne_sample$Region))),
+  selectizeInput('colRegion', 'Region:', choices=c("All",regions_list),
                  selected=NULL,multiple=TRUE,options = list(maxItems = 3,dropdownParent = 'body')),
-  selectizeInput('colCountry', 'Country:', choices=c("All",sort(unique(data_tsne_sample$Country))),
+  selectizeInput('colCountry', 'Country:', choices=c("All",countries_list),
                  selected=NULL,multiple=TRUE,options = list(maxItems = 3,dropdownParent = 'body')),
   #),
   HTML('<hr style="color: purple;">'),
   h4("Color by"),
-  selectizeInput('colIndicator', 'Indicator:', choices=c("All","Missing values",indicators_1_2$name),#sort(names(data_tsne_sample)[!sapply(data_tsne_sample, is.character)])),
+  selectizeInput('colIndicator', 'Indicator:', choices=c("All","Missing values",indicators_list),#sort(names(data_tsne_sample)[!sapply(data_tsne_sample, is.character)])),
                  options = list(dropdownParent = 'body')),
   HTML('<hr style="color: purple;">'),
   h4("Select indicators"),
   selectizeInput(
-    'explore_variables', 'Select up to 10 indicators:', choices = indicators_1_2$name,
+    'explore_variables', 'Select up to 10 indicators:', choices = indicators_list,
     multiple = TRUE, selected = indicator_selection_names, options = list(maxItems = 10)
   )
 )
 
 # server
 # update country selector with region selector
-observe({
-  
-  if (!((input$colRegion=="All") || (is.null(input$colRegion)))){
-    region <- input$colRegion
-    updateSelectizeInput(session, "colCountry",
-                         choices=sort(unique(filter(data_tsne_sample, Region %in% region)$Country)), 
-                         selected=NULL)
-  }
-  
-})  
+ observe({
+   
+   if (!((input$colRegion=="All") || (is.null(input$colRegion)))){
+     region <- input$colRegion
+     updateSelectizeInput(session, "colCountry",
+                          choices=sort(unique(filter(data_tsne_sample, Region %in% region)$main_object)), 
+                          selected=NULL)
+   }
+   
+ })  
 ```
 
 Column {data-width=700}
@@ -181,8 +181,10 @@ output$hover_info <- renderUI({
   # actual tooltip created as wellPanel
   panel_input <- ""
   for (i in 1:length(input$explore_variables)){
-    panel_input <- paste0(panel_input,input$explore_variables[i],": ",eval(parse(text=paste0("point$X",filter(indicators_1_2, name==input$explore_variables[i])$id))),"<br/>")
+    # panel_input <- paste0(panel_input,input$explore_variables[i],": ",eval(parse(text=paste0("point$X",filter(indicators_1_2, name==input$explore_variables[i])$id))),"<br/>")
+    panel_input <- paste0(panel_input,input$explore_variables[i],": ",eval(parse(text=paste0("point$X",filter(data_attributes, Series_Name==input$explore_variables[i])$Series_Code))),"<br/>")
   }
+  
   #     for (i in 1:length(input$explore_variables)){
   #       panel_input <- paste0(panel_input,point$Indicator[i],": ",point$Observation[i],"<br/>")
   #     }
@@ -250,29 +252,6 @@ output$click_info <- renderUI({
 
 Column {data-width=300}
 -----------------------------------------------------------------------
-
-<!-- ### table -->
-
-<!-- ```{r} -->
-
-<!-- selectedData <- reactive({ -->
-
-<!--   hover <- input$plot_hover -->
-<!--   point <- nearPoints(.tSNE_plot_filter_hover(input$colRegion,input$colPeriod,input$colCountry,input$explore_variables),hover, threshold = 4, maxpoints = 1) -->
-
-<!--   if (nrow(point) == 0) {  -->
-<!--     hoverData <- str(point)  -->
-<!--   } else { -->
-<!--     hoverData <- t(point) -->
-<!--   } -->
-<!-- }) -->
-
-<!-- renderTable({ -->
-<!--   selectedData() -->
-<!-- }) -->
-
-<!-- ``` -->
-
 ### Box-plots
 
 ```{r}
