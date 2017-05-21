@@ -42,8 +42,8 @@ regions_list <- sort(unique(data_tsne_sample$Region))
 #indicators_list <- gsub("X","",indicators_list)
 indicators_list <- sort(unique(data_attributes$Series_Name))
 # indicators pre-selected for the side plots
-indicator_selection_plots <- unique(data_attributes$Series_Code)[1:6]
-#("289","315","321","350","361","416")
+#indicator_selection_plots <- unique(data_attributes$Series_Code)[1:6]
+indicator_selection_plots <- c("FSKNL_PT","WP11672.1","CM.MKT.LCAP.GD.ZS","i_ATMs_pop","CM.MKT.LDOM.NO","CM.MKT.TRNR")
 indicator_selection_names <- unique(filter(data_attributes, Series_Code %in% indicator_selection_plots)$Series_Name)
 #indicator_selection_names <- filter(indicators_1_2, id %in% indicator_selection_plots)$name
 # indicator_selection_plots_short <- c("Ease_DB","Corruption","Unemployed",
