@@ -26,7 +26,7 @@ write.csv(data_attributes, "data/data_attributes.csv", row.names = FALSE)
 # indicatorID: dimensions to be reduced
 data <- select(data, main_object = Country_Code, indicatorID = Series_Code, starts_with("X"))
 # to display attributes when mouse over the dots
-data_filter <- .filter_datascope(data)
+data_filter <- .filter_datascope(data, isCountry = FALSE)
 write.csv(data_filter, "data/data_filter.csv", row.names = FALSE)
 
 # 2. Call: .prepare_data() (that calls: .filter_datascope_data()) and

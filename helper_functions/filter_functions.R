@@ -105,16 +105,21 @@
 }
 
 # filter datascope original data
-.filter_datascope <- function(data){
+.filter_datascope <- function(data, isCountry = TRUE){
   
   data_filter <- data %>%
     gather(Period,Observation,-main_object,-indicatorID) %>%
     #inner_join(indicators_1_2, by="id") %>%
     dplyr::select(main_object,indicatorID,Period,Observation) %>%
     distinct(main_object, Period, indicatorID, .keep_all=TRUE) %>%
-    mutate(Period = as.character(gsub("X","",Period))) %>%
-    inner_join(select(countries,iso3,Country=name,Region=region,IncomeLevel=incomeLevel),
-               by=c("main_object"="iso3"))
+    mutate(Period = as.character(gsub("X","",Period))) 
+  
+  if (isCountry){
+    data_filter <- data_filter %>%
+      inner_join(select(countries,iso3,Country=name,Region=region,IncomeLevel=incomeLevel),
+                 by=c("main_object"="iso3"))
+  }
+  
  
   return(data_filter) 
   

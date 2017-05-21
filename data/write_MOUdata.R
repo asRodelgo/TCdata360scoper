@@ -10,24 +10,27 @@ helpers <- file.path("helper_functions", list.files("helper_functions", full.nam
 for (h in helpers) source(h, local = TRUE)
 
 # read data from source and get it ready for the app
-data <- read.csv("/Users/asanchez3/Desktop/Work/EFI_Dashboards/data/backups/EFI_MOU_Details.csv")
-
-data <- read_excel("data/Data_Extract_From_FIG.xlsx")
-names(data) <- gsub("[0-9]* \\[[A-Z]*","X",names(data))
-names(data) <- gsub("\\]","",names(data))
-names(data) <- gsub(" ","_",names(data))
-data <- data %>% mutate_at(vars(matches("[0-9]")), as.numeric)
+data <- read.csv("/Users/asanchez3/Desktop/Work/EFI_Dashboards/data/backups/EFI_MOU_Details.csv",
+                 stringsAsFactors = FALSE)
 # put attributes away for later
-data_attributes <- dplyr::select(data, -starts_with("X")) %>% distinct(.keep_all=TRUE)
+data_measures <- select_if(data, is.numeric)
+data_objects <- select(data, main_object = WB_Project_ID, Period = MOU_Fiscal_Year, main_object_desc = WB_Project_Name)
+
+data_attributes <- bind_cols(data_objects, data_measures)
+data_attributes <- gather(data_attributes, Series_Code, Observation, -main_object, -Period, -main_object_desc) %>%
+  select(Country_Code = main_object, Country_Name = main_object_desc, Series_Code, Period, Observation) %>% mutate(Series_Name = Series_Code)
+  
 write.csv(data_attributes, "data/data_attributes.csv", row.names = FALSE)
 
 # reduce data to minimum required for tSNE
 # main_object: variable to plot
 # Period: time period
 # indicatorID: dimensions to be reduced
-data <- select(data, main_object = Country_Code, indicatorID = Series_Code, starts_with("X"))
+data <- select(data_attributes, main_object = Country_Code, indicatorID = Series_Code, Period, Observation) %>%
+  mutate(Period = paste0("X",Period)) %>% distinct(main_object, indicatorID, Period, .keep_all=TRUE) %>%
+  spread(Period, Observation)
 # to display attributes when mouse over the dots
-data_filter <- .filter_datascope(data)
+data_filter <- .filter_datascope(data, isCountry = FALSE)
 write.csv(data_filter, "data/data_filter.csv", row.names = FALSE)
 
 # 2. Call: .prepare_data() (that calls: .filter_datascope_data()) and
