@@ -182,7 +182,7 @@ output$hover_info <- renderUI({
   panel_input <- ""
   for (i in 1:length(input$explore_variables)){
     # panel_input <- paste0(panel_input,input$explore_variables[i],": ",eval(parse(text=paste0("point$X",filter(indicators_1_2, name==input$explore_variables[i])$id))),"<br/>")
-    panel_input <- paste0(panel_input,input$explore_variables[i],": ",eval(parse(text=paste0("point$X",filter(data_attributes, Series_Name==input$explore_variables[i])$Series_Code))),"<br/>")
+    panel_input <- paste0(panel_input,input$explore_variables[i],": ",eval(parse(text=paste0("point$X",unique(filter(data_attributes, Series_Name==input$explore_variables[i])$Series_Code)))),"<br/>")
   }
   
   #     for (i in 1:length(input$explore_variables)){
@@ -199,9 +199,7 @@ output$hover_info <- renderUI({
 # tooltip click over scatterplot points: see https://gitlab.com/snippets/16220
 output$click_info <- renderUI({
   click <- input$plot_click
-  point <- nearPoints(.tSNE_plot_filter_hover(input$colRegion,input$colPeriod,input$colCountry,
-                                              input$explore_variables),
-                      click, threshold = 4, maxpoints = 1, addDist = TRUE)
+  point <- nearPoints(.tSNE_plot_filter_hover(input$colRegion,input$colPeriod,input$colCountry,input$explore_variables), click, threshold = 4, maxpoints = 1, addDist = TRUE)
   #     
   if (nrow(point) == 0) return(NULL)
   # calculate top 10 closest Country,Period pairs to the clicked one
@@ -237,9 +235,9 @@ output$click_info <- renderUI({
   style <- paste0("position:absolute; z-index:10; background-color: rgba(245, 245, 245, 0.85); ",
                   "left:", left_px + 2, "px; top:", top_px + 2, "px;")
   # actual tooltip created as wellPanel
-  panel_input <- paste0('Closest 10 Economies (Eucl. dist.) to ','<a href=',country_url,filter(countries, name==tableTop10$Country[1])$iso3,' target="_blank" >',tableTop10$Country[1],' (',tableTop10$Period[1],')</a><br/><br/>')
+  panel_input <- paste0('Closest 10 Economies (Eucl. dist.) to ','<a href=',country_url,unique(filter(data_attributes, Country_Name==tableTop10$Country[1])$Country_Code),' target="_blank" >',tableTop10$Country[1],' (',tableTop10$Period[1],')</a><br/><br/>')
   for (i in 2:11){
-    panel_input <- paste0(panel_input,'<a href=',country_url,filter(countries, name==tableTop10$Country[i])$iso3,' target="_blank" >',tableTop10$Country[i],' (',tableTop10$Period[i],')</a> : ',round(tableTop10$dist[i],3),'<br/>')
+    panel_input <- paste0(panel_input,'<a href=',country_url,unique(filter(data_attributes, Country_Name==tableTop10$Country[1])$Country_Code),' target="_blank" >',tableTop10$Country[i],' (',tableTop10$Period[i],')</a> : ',round(tableTop10$dist[i],3),'<br/>')
   }
   
   wellPanel(

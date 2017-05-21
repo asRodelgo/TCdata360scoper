@@ -312,7 +312,7 @@
                                -IncomeLevel,-Region,-Period,-x,-y,-group) %>%
     distinct(Country, Period, indicator, .keep_all=TRUE)
   tsne_points_filter$indicator <- gsub("X","",tsne_points_filter$indicator)
-  tsne_points_filter <- merge(tsne_points_filter,data_attributes[,c("Series_Code","Series_Name")], by.x="indicator",by.y="Series_Code",all.x = TRUE) 
+  tsne_points_filter <- merge(tsne_points_filter,distinct(data_attributes[,c("Series_Code","Series_Name")]), by.x="indicator",by.y="Series_Code",all.x = TRUE) 
   tsne_points_filter <- tsne_points_filter %>%
     select(-indicator) %>%
     select(indicator = Series_Name, everything())
@@ -329,7 +329,7 @@
     distinct(Country, Period, indicator, .keep_all=TRUE)
   
   tsne_ready_gather$indicator <- gsub("X","",tsne_ready_gather$indicator)
-  tsne_ready_gather <- merge(tsne_ready_gather,data_attributes[,c("Series_Code","Series_Name")], by.x="indicator",by.y="Series_Code",all.x = TRUE) 
+  tsne_ready_gather <- merge(tsne_ready_gather,distinct(data_attributes[,c("Series_Code","Series_Name")]), by.x="indicator",by.y="Series_Code",all.x = TRUE) 
   tsne_ready_gather <- tsne_ready_gather %>%
     select(-indicator) %>%
     select(indicator = Series_Name, everything())
@@ -358,7 +358,7 @@
       brushPoints <- dplyr::select(brushPoints,group,one_of(selected_indicators_codes))
       brushPoints <- gather(brushPoints, indicator, value, -group)
       brushPoints$indicator <- gsub("X","",brushPoints$indicator)
-      brushPoints <- merge(brushPoints,data_attributes[,c("Series_Code","Series_Name")], by.x="indicator",by.y="Series_Code",all.x = TRUE) 
+      brushPoints <- merge(brushPoints,distinct(data_attributes[,c("Series_Code","Series_Name")]), by.x="indicator",by.y="Series_Code",all.x = TRUE) 
       brushPoints <- brushPoints %>%
         select(-indicator) %>%
         select(indicator = Series_Name, everything())
