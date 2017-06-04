@@ -8,6 +8,10 @@
   
   data_tsne <- .prepare_data(data)
   
+  # remove all columns with all NAs (in case there are NaNs besides NAs)
+  data_tsne <- data_tsne[,!(colSums(is.na(data_tsne))==nrow(data_tsne))]
+  
+  
   data_tsne_sample <- filter(data_tsne, Period > periodMin & Period < periodMax)
   
   if (nrow(data_tsne)>0){
