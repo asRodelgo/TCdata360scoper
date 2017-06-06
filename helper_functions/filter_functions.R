@@ -52,14 +52,14 @@
 # Filters for hover over tooltips ---------------------------------------------------------
 .tSNE_plot_filter_hover <- function(colRegion,colPeriod,colCountry,selected_indicators){
   #
-  if (colCountry=="All" || is.null(colCountry)) colCountry <- countries_list
+  if (colCountry=="All" || is.null(colCountry)) colCountry <- as.character(countries_list)
   if (colRegion=="All" || is.null(colRegion)) colRegion <- regions_list
   if (colPeriod=="All" || is.null(colPeriod)) colPeriod <- periods_list
 
   if (length(tsne_ready)>0){ # if data do stuff
     #datascope_filter <- .filter_datascope()
-    tsne_points_filter <- inner_join(tsne_ready[,c("main_object","Period","x","y","missing_values")],mutate(data_filter, Period = as.character(Period)), by=c("main_object","Period")) %>%
-      filter(Country %in% colCountry & Region %in% colRegion & Period %in% colPeriod) %>%
+    tsne_points_filter <- inner_join(tsne_ready[,c("main_object","Period","Region", "Country","x","y","missing_values")],mutate(data_filter, Period = as.character(Period)), by=c("main_object","Period")) %>%
+      filter(main_object %in% colCountry & Region %in% colRegion & Period %in% colPeriod) %>%
       dplyr::select(indicatorID,Period,Observation,Country,x,y) %>%
       distinct(Country,Period,indicatorID, .keep_all=TRUE)
     

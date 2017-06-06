@@ -16,7 +16,12 @@ library(jsonlite)
 #enableBookmarking(store = "url")
 
 # Read the global data available for the whole session. Will be loaded only once
-source("data/read_dataFIG.R", local = TRUE)
+data_attributes <- read.csv("data/data_attributes.csv", stringsAsFactors = FALSE) 
+    # (columns: "Country_Name"  "Country_Code"  "Series_Name" "Indicator_Dimension" "Series_Code")       
+data_filter <- read.csv("data/data_filter.csv", stringsAsFactors = FALSE)
+    # (columns: "main_object" "indicatorID" "Period"  "Observation")
+data_filter$main_object <- as.character(data_filter$main_object)
+data_filter$Period <- as.character(data_filter$Period)
 
 # These functions are called before the actual server work. They will be loaded for the
 # session
@@ -29,11 +34,14 @@ for (h in helpers) source(h, local = TRUE)
 # ----------- tSNE data topology
 tsne_points <- read.csv("data/tsne_points.csv",stringsAsFactors = FALSE)
 data_tsne <- read.csv("data/data_tsne.csv",stringsAsFactors = FALSE)
+data_tsne$main_object <- as.character(data_tsne$main_object)
 data_tsne$Period <- as.character(data_tsne$Period) # to avoid continuous gradient color
-data_tsne_sample <- filter(data_tsne, Period < "2017" & Period > "1995")
+data_tsne_sample <- filter(data_tsne, Period == "2017")
 tsne_ready <- cbind(data_tsne_sample,tsne_points)
 names(tsne_ready)[ncol(tsne_ready)-1] <- "x"
 names(tsne_ready)[ncol(tsne_ready)] <- "y"
+tsne_ready$main_object <- as.character(tsne_ready$main_object)
+
 # Default selector choices for tsne -----------
 countries_list <- sort(unique(data_attributes$Country_Name))
 periods_list <- sort(unique(data_tsne_sample$Period))
