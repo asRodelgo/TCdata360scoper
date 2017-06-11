@@ -33,4 +33,4 @@
 }
 
 # Run it!
-.generateTSNE()
+#.generateTSNE()

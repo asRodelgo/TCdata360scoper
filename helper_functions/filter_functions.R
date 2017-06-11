@@ -59,7 +59,7 @@
   if (length(tsne_ready)>0){ # if data do stuff
     #datascope_filter <- .filter_datascope()
     tsne_points_filter <- inner_join(tsne_ready[,c("main_object","Period","Region", "Country","x","y","missing_values")],mutate(data_filter, Period = as.character(Period)), by=c("main_object","Period")) %>%
-      filter(main_object %in% colCountry & Region %in% colRegion & Period %in% colPeriod) %>%
+      filter(Country %in% colCountry & Region %in% colRegion & Period %in% colPeriod) %>%
       dplyr::select(indicatorID,Period,Observation,Country,x,y) %>%
       distinct(Country,Period,indicatorID, .keep_all=TRUE)
     

@@ -91,7 +91,7 @@
   #write.csv(data_tsne, "data/data_tsne.csv",row.names = FALSE)
 }
 # Run it!
-write.csv(data_tsne, "data/data_tsne.csv",row.names = FALSE)
+# write.csv(data_tsne, "data/data_tsne.csv",row.names = FALSE)
 
 #.prepare_data()
 

@@ -43,7 +43,7 @@ names(tsne_ready)[ncol(tsne_ready)] <- "y"
 tsne_ready$main_object <- as.character(tsne_ready$main_object)
 
 # Default selector choices for tsne -----------
-countries_list <- sort(unique(data_attributes$Country_Name))
+countries_list <- sort(unique(data_tsne_sample$Country))
 periods_list <- sort(unique(data_tsne_sample$Period))
 regions_list <- sort(unique(data_tsne_sample$Region))
 #indicators_list <- names(data_tsne_sample)[!sapply(data_tsne_sample, is.character)]

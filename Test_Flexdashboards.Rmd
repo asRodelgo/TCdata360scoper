@@ -42,10 +42,10 @@ tagList(
   #splitLayout(cellWidths = rep("33%", 3),
   selectizeInput('colPeriod', 'Period:', choices=c("All",sort(unique(data_tsne_sample$Period))),
                  selected=NULL,multiple=TRUE,options = list(maxItems = 5,dropdownParent = 'body')),
-  selectizeInput('colRegion', 'Region:', choices=c("All",regions_list),
-                 selected=NULL,multiple=TRUE,options = list(maxItems = 3,dropdownParent = 'body')),
-  selectizeInput('colCountry', 'Country:', choices=c("All",countries_list),
-                 selected=NULL,multiple=TRUE,options = list(maxItems = 3,dropdownParent = 'body')),
+  selectizeInput('colRegion', 'Practice:', choices=c("All",regions_list),
+                 selected=NULL,multiple=TRUE,options = list(maxItems = 5,dropdownParent = 'body')),
+  selectizeInput('colCountry', 'Staff name:', choices=c("All",countries_list),
+                 selected=NULL,multiple=TRUE,options = list(maxItems = 5,dropdownParent = 'body')),
   #),
   HTML('<hr style="color: purple;">'),
   h4("Color by"),
@@ -61,12 +61,12 @@ tagList(
 
 # server
 # update country selector with region selector
- observe({
+ observeEvent(input$colRegion, {
    
    if (!((input$colRegion=="All") || (is.null(input$colRegion)))){
      region <- input$colRegion
      updateSelectizeInput(session, "colCountry",
-                          choices=sort(unique(filter(data_tsne_sample, Region %in% region)$main_object)), 
+                          choices=sort(unique(filter(data_tsne_sample, Region %in% region)$Country)), 
                           selected=NULL)
    }
    
