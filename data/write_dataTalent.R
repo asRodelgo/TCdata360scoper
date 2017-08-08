@@ -11,12 +11,14 @@ sqlTables(EFI_ANALYTICS)
 # Employee_TRS_Project_Team
 # RM_Employee_Project
 talent <- sqlQuery(EFI_ANALYTICS, "SELECT * FROM Analytics.Employee_TRS_Project_Team ")
+#talent <- sqlQuery(EFI_ANALYTICS, "SELECT top 100 * FROM Analytics.Employee_TRS_Project_Team ")
 # WHERE [WB Practice Code] = 'TAC' 
 names(talent) <- gsub(" ", "_", names(talent))
 staff <- select(talent, Employee_Full_Name, Employee_Last_Name) %>% distinct()
 talentHead <- head(talent)
 talent_EFI <- filter(talent, !is.na(Employee_Practice_Code)) %>% mutate(Employee_Practice_Code = trimws(Employee_Practice_Code)) %>%
   filter(Employee_Practice_Code %in% c("TAC","GOV","POV","FAM","MFM"))
+names(talent_EFI) <- gsub("/","_",names(talent_EFI),fixed=TRUE)
 
 # make factors numeric except for reference variables
 # Start with Employee UPI
@@ -39,7 +41,8 @@ data_original <- talent_original[,!(colSums(is.na(talent_original))==nrow(talent
 
 data_original <- gather(data_original, Series_Code, Observation, -c(Employee_UPI_9)) %>% 
   mutate_at(vars(-c(Observation)), funs(as.character(.))) %>% 
-  rename(X2017 = Observation) %>% distinct(.keep_all=TRUE) %>%
+  rename(X2017 = Observation) %>% 
+  distinct(Employee_UPI_9,Series_Code,.keep_all=TRUE) %>%
   as.data.frame()
 
 #names(data)[substr(names(data),1,1)==2] <- paste0("X",names(data)[substr(names(data),1,1)==2])
@@ -59,16 +62,43 @@ data_attributes <- select(data, Country_Code = Employee_UPI_9, Series_Code) %>%
   mutate(Country_Name = Country_Code, Series_Name = Series_Code) %>%
   distinct(.keep_all=TRUE)
 
-write.csv(data_attributes, "data/data_attributes.csv", row.names = FALSE)
-
 # reduce data to minimum required for tSNE
 # main_object: variable to plot
 # Period: time period
 # indicatorID: dimensions to be reduced
 data <- select(data, main_object = Employee_UPI_9, indicatorID = Series_Code, starts_with("X"))
 data_original <- select(data_original, main_object = Employee_UPI_9, indicatorID = Series_Code, starts_with("X"))
+
+### thematic subsets: -------------------------------------
+
+## Project
+#data <- filter(data, grepl("^WB",indicatorID))
+#data_original <- filter(data_original, grepl("^WB",indicatorID))
+#data_attributes <- filter(data_attributes, grepl("^WB",Series_Code))
+
+## Employee
+#data <- filter(data, grepl("^Employee",indicatorID))
+#data_original <- filter(data_original, grepl("^Employee",indicatorID))
+#data_attributes <- filter(data_attributes, grepl("^Employee",Series_Code))
+
+## TRS
+#data <- filter(data, grepl("^TRS",indicatorID))
+#data_original <- filter(data_original, grepl("^TRS",indicatorID))
+#data_attributes <- filter(data_attributes, grepl("^TRS",Series_Code))
+
+## Proximity (physical and Hierarchical)
+indicator_List_Proximity <- c("Employee_City_Code", # To distinguish between IBRD and IFC use: "Employee_Company","Employee_Division",
+                              "Employee_Duty_Country","Employee_Location",
+                              "Employee_Manager","Employee_Unit",
+                              "Employee_Practice_Code","Employee_Room_Nbr")
+data <- filter(data,indicatorID %in% indicator_List_Proximity)
+data_original <- filter(data_original, indicatorID %in% indicator_List_Proximity)
+data_attributes <- filter(data_attributes, Series_Code %in% indicator_List_Proximity)
+
+write.csv(data_attributes, "data/data_attributes.csv", row.names = FALSE)
+
 ## to display attributes when mouse over the dots
-data_filter <- .filter_datascope(data, isCountry = FALSE)
+#data_filter <- .filter_datascope(data, isCountry = FALSE)
 data_filter <- .filter_datascope(data_original, isCountry = FALSE)
 write.csv(data_filter, "data/data_filter.csv", row.names = FALSE)
 
@@ -91,6 +121,6 @@ data_tsne <- left_join(data_tsne,countries[,c("iso3","region","name","incomeLeve
 # 3. Call: .generateTSNE() which calls .prepare_data() which calls: .filter_datascope_data() and writes tsne_points.csv to disk
  library(tsne)
 .generateTSNE(data, periodMin = "1900", periodMax = "2100",
-                             num_iter = 800, max_num_neighbors = 10, num_epochs = 100)
+                             num_iter = 500, max_num_neighbors = 10, num_epochs = 100)
 
 #write.csv(tsne_points, "data/tsne_points.csv", row.names = FALSE)

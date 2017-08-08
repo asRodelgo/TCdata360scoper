@@ -11,7 +11,7 @@ library(knitr) # generate LaTeX PDF report
 library(jsonlite)
 
 # global data and functions -----------------------------------------
-
+thisFY <- "2017"
 # bookmark this app
 #enableBookmarking(store = "url")
 
@@ -36,7 +36,7 @@ tsne_points <- read.csv("data/tsne_points.csv",stringsAsFactors = FALSE)
 data_tsne <- read.csv("data/data_tsne.csv",stringsAsFactors = FALSE)
 data_tsne$main_object <- as.character(data_tsne$main_object)
 data_tsne$Period <- as.character(data_tsne$Period) # to avoid continuous gradient color
-data_tsne_sample <- filter(data_tsne, Period == "2017")
+data_tsne_sample <- filter(data_tsne, Period == thisFY)
 tsne_ready <- cbind(data_tsne_sample,tsne_points)
 names(tsne_ready)[ncol(tsne_ready)-1] <- "x"
 names(tsne_ready)[ncol(tsne_ready)] <- "y"
