@@ -86,11 +86,18 @@ data_original <- select(data_original, main_object = Employee_UPI_9, indicatorID
 #data_original <- filter(data_original, grepl("^TRS",indicatorID))
 #data_attributes <- filter(data_attributes, grepl("^TRS",Series_Code))
 
-## Proximity (physical and Hierarchical)
-indicator_List_Proximity <- c("Employee_City_Code", # To distinguish between IBRD and IFC use: "Employee_Company","Employee_Division",
-                              "Employee_Duty_Country","Employee_Location",
-                              "Employee_Manager","Employee_Unit",
-                              "Employee_Practice_Code","Employee_Room_Nbr")
+## Proximity (physical)
+# indicator_List_Proximity <- c("Employee_City_Code", # To distinguish between IBRD and IFC use: "Employee_Company","Employee_Division",
+#                               "Employee_Duty_Country","Employee_Location",
+#                               "Employee_Practice_Code","Employee_Room_Nbr")
+## Proximity (skills)
+indicator_List_Proximity <- c("Employee_Division", # To distinguish between IBRD and IFC use: "Employee_Company","Employee_Division",
+                              "Employee_FCS_Country_Flag","Employee_Job_Code",
+                              "Employee_Job_Title","Employee_Language",
+                              "Employee_Languages_Spoken","Employee_Manager","Employee_Primary_Sector","Employee_Skill","WBG_Project_ID",
+                              "Employee_Subtype","Employee_Unit","Team_Role","Team_Project_ID","TRS_Cost_Object_ID","WBG_Product",
+                              "WBG_Product_Line_Code","WBG_Product_Type","WBG_Project_Country",
+                              "WBG_Project_Region","WBG_Team_Lead")
 data <- filter(data,indicatorID %in% indicator_List_Proximity)
 data_original <- filter(data_original, indicatorID %in% indicator_List_Proximity)
 data_attributes <- filter(data_attributes, Series_Code %in% indicator_List_Proximity)
@@ -121,6 +128,6 @@ data_tsne <- left_join(data_tsne,countries[,c("iso3","region","name","incomeLeve
 # 3. Call: .generateTSNE() which calls .prepare_data() which calls: .filter_datascope_data() and writes tsne_points.csv to disk
  library(tsne)
 .generateTSNE(data, periodMin = "1900", periodMax = "2100",
-                             num_iter = 500, max_num_neighbors = 10, num_epochs = 100)
+                             num_iter = 400, max_num_neighbors = 10, num_epochs = 100)
 
 #write.csv(tsne_points, "data/tsne_points.csv", row.names = FALSE)

@@ -192,6 +192,9 @@ output$hover_info <- renderUI({
   wellPanel(
     style = style,
     p(HTML(paste0(point$Country," - ",point$Period,"<br/><br/>",
+                  
+                  "<div style = 'display:inline-block; height:75px; width:75px; margin-left:5%; position: relative; border: 1px solid gray;-webkit-border-radius: 75px;-moz-border-radius: 75px;border-radius: 50px;vertical-align:middle; overflow: hidden;'><img src = ",get_operational_profile_photo(point$Country)[1,1]," style = 'display:block; margin:0 auto; height:auto; width:80%; vertical-align:middle'> </img></div>",
+                  
                   "<div class='text' style='color:grey; font-size:12px;'>",panel_input,"</div>")))
   )
 })
@@ -235,9 +238,14 @@ output$click_info <- renderUI({
   style <- paste0("position:absolute; z-index:10; background-color: rgba(245, 245, 245, 0.85); ",
                   "left:", left_px + 2, "px; top:", top_px + 2, "px;")
   # actual tooltip created as wellPanel
-  panel_input <- paste0('Closest 10 Economies (Eucl. dist.) to ','<a href=',country_url,unique(filter(data_attributes, Country_Name==tableTop10$Country[1])$Country_Code),' target="_blank" >',tableTop10$Country[1],' (',tableTop10$Period[1],')</a><br/><br/>')
+  panel_input <- paste0('Closest Staff to ',
+                        "<div style = 'display:inline-block; height:60px; width:60px; margin-left:5%; position: relative; border: 1px solid gray;-webkit-border-radius: 75px;-moz-border-radius: 75px;border-radius: 50px;vertical-align:middle; overflow: hidden;'><img src = ",get_operational_profile_photo(tableTop10$Country[1])[1,1]," style = 'display:block; margin:0 auto; height:auto; width:80%; vertical-align:middle'> </img></div>",
+                        '<a href=',country_url,unique(filter(data_attributes, Country_Name==tableTop10$Country[1])$Country_Code),' target="_blank" >',tableTop10$Country[1],' (',tableTop10$Period[1],')</a><br/><br/>')
+  
   for (i in 2:11){
-    panel_input <- paste0(panel_input,'<a href=',country_url,unique(filter(data_attributes, Country_Name==tableTop10$Country[1])$Country_Code),' target="_blank" >',tableTop10$Country[i],' (',tableTop10$Period[i],')</a> : ',round(tableTop10$dist[i],3),'<br/>')
+    panel_input <- paste0(panel_input,
+                          "<div style = 'display:inline-block; height:33px; width:33px; margin-left:5%; margin-right:1%; position: relative; border: 1px solid gray;-webkit-border-radius: 75px;-moz-border-radius: 75px;border-radius: 50px;vertical-align:middle; overflow: hidden;'><img src = ",get_operational_profile_photo(tableTop10$Country[i])[1,1]," style = 'display:block; margin:0 auto; height:auto; width:80%; vertical-align:middle'> </img></div>",
+                          '<a href=',country_url,unique(filter(data_attributes, Country_Name==tableTop10$Country[1])$Country_Code),' target="_blank" >',tableTop10$Country[i],' (',tableTop10$Period[i],')</a><br/>')
   }
   
   wellPanel(

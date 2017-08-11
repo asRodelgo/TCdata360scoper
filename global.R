@@ -9,6 +9,7 @@ library(DT) # customize dataTable javascript library
 library(reshape2) # manipulate data
 library(knitr) # generate LaTeX PDF report
 library(jsonlite)
+library(RODBC)
 
 # global data and functions -----------------------------------------
 thisFY <- "2017"

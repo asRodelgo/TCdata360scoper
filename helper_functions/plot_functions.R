@@ -461,3 +461,19 @@
   
   return(tsne_points_mean)
 }
+
+# Staff Photo data
+get_operational_profile_photo <- function(pm) {
+  
+  Talent <- RODBC::odbcDriverConnect('DRIVER={ODBC Driver 13 for SQL Server};
+    SERVER=WBGMSSQLEOA001,5800;Database=WBG;uid=EFI_User;pwd=Efi2017go!')
+  
+  data <- sqlQuery(Talent, paste0("SELECT top 1 [Employee Photo] FROM Analytics.Employee_TRS_Project_Team Where [Employee Full Name]='",pm,"'"))
+  
+  names(data) <- gsub(" ","_",names(data))
+  
+  # copy image to www so I can render it later in LaTeX (PDF)
+  #download.file(as.character(data[1,1]), paste0("www/",gsub(" ","_",pm),".jpg"), mode = "wb")
+  
+  return(data)
+}
