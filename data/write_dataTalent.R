@@ -91,14 +91,20 @@ data_original <- select(data_original, main_object = Employee_UPI_9, indicatorID
 #                               "Employee_Duty_Country","Employee_Location",
 #                               "Employee_Practice_Code","Employee_Room_Nbr")
 ## Proximity (skills)
-indicator_List_Proximity <- c("Employee_Division", # To distinguish between IBRD and IFC use: "Employee_Company","Employee_Division",
+indicator_List_Proximity <- c(# To distinguish between IBRD and IFC use: "Employee_Company","Employee_Division",
                               "Employee_FCS_Country_Flag","Employee_Job_Code",
-                              "Employee_Job_Title","Employee_Language",
-                              "Employee_Languages_Spoken","Employee_Manager","Employee_Primary_Sector","Employee_Skill","WBG_Project_ID",
-                              "Employee_Subtype","Employee_Unit","Team_Role","Team_Project_ID","TRS_Cost_Object_ID","WBG_Product",
-                              "WBG_Product_Line_Code","WBG_Product_Type","WBG_Project_Country",
-                              "WBG_Project_Region","WBG_Team_Lead")
+                              "Employee_Primary_Sector",
+                              "Employee_Subtype","Employee_Unit","Team_Role")
 data <- filter(data,indicatorID %in% indicator_List_Proximity)
+
+## Add Term Document Matrix for Employee_Skill variable ------ ## SEE: tm_analysis.R
+tdm <- read.csv("data/termDocMatrix.csv")
+tdm <- gather(tdm, indicatorID, X2017, - X)
+names(tdm)[1] <- "main_object"
+tdm$main_object <- as.character(tdm$main_object)
+data <- bind_rows(data,tdm)
+
+
 data_original <- filter(data_original, indicatorID %in% indicator_List_Proximity)
 data_attributes <- filter(data_attributes, Series_Code %in% indicator_List_Proximity)
 
@@ -128,6 +134,6 @@ data_tsne <- left_join(data_tsne,countries[,c("iso3","region","name","incomeLeve
 # 3. Call: .generateTSNE() which calls .prepare_data() which calls: .filter_datascope_data() and writes tsne_points.csv to disk
  library(tsne)
 .generateTSNE(data, periodMin = "1900", periodMax = "2100",
-                             num_iter = 400, max_num_neighbors = 10, num_epochs = 100)
+                             num_iter = 400, max_num_neighbors = 20, num_epochs = 100)
 
 #write.csv(tsne_points, "data/tsne_points.csv", row.names = FALSE)
