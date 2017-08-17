@@ -92,18 +92,28 @@ data_original <- select(data_original, main_object = Employee_UPI_9, indicatorID
 #                               "Employee_Practice_Code","Employee_Room_Nbr")
 ## Proximity (skills)
 indicator_List_Proximity <- c(# To distinguish between IBRD and IFC use: "Employee_Company","Employee_Division",
-                              "Employee_FCS_Country_Flag","Employee_Job_Code",
-                              "Employee_Primary_Sector",
-                              "Employee_Subtype","Employee_Unit","Team_Role")
-data <- filter(data,indicatorID %in% indicator_List_Proximity)
+                              "Employee_Job_Title","Employee_Location","Employee_Manager","Employee_Unit",
+                              "Employee_Primary_Sector","Employee_Primary_Specialization",
+                              "Employee_Subtype", "Employee_Skill",
+                              "Employee_Language",
+                              "Employee_T&C_Cross-Cutting_Affiliation", "Employee_T&C_Primary_Affiliation", "Employee_T&C_Secondary_Affiliation"
+                              )
+#data <- filter(data,indicatorID %in% indicator_List_Proximity)
+add_projectSkills <- projectSkills
+add_projectSkills$indicatorID <- "pasteText"
+add_projectSkills <- select(add_projectSkills, main_object = Employee_UPI_9, indicatorID, X2017 = pasteText) %>%
+  mutate(main_object = as.character(main_object))
+
+data <- select(data, main_object, indicatorID) %>% bind_rows(add_projectSkills)
+data$X2017 <- as.numeric(data$X2017)
 
 ## Add Term Document Matrix for Employee_Skill variable ------ ## SEE: tm_analysis.R
 tdm <- read.csv("data/termDocMatrix.csv")
 tdm <- gather(tdm, indicatorID, X2017, - X)
 names(tdm)[1] <- "main_object"
+tdm <- filter(tdm, X2017>0)
 tdm$main_object <- as.character(tdm$main_object)
 data <- bind_rows(data,tdm)
-
 
 data_original <- filter(data_original, indicatorID %in% indicator_List_Proximity)
 data_attributes <- filter(data_attributes, Series_Code %in% indicator_List_Proximity)
@@ -121,19 +131,20 @@ write.csv(data_filter, "data/data_filter.csv", row.names = FALSE)
 ## remove all columns with all NAs
  data_tsne <- data_tsne[,!(colSums(is.na(data_tsne))==nrow(data_tsne))]
 # Ficticious countries data.frame:
-
 countries <- select(talent, iso3 = Employee_UPI_9, region = Employee_Practice_Code, name = Employee_Full_Name, incomeLevel = Employee_Employment_Status) %>% 
   mutate(region = trimws(region)) %>%
   distinct(.keep_all=TRUE) %>% mutate_all(funs(as.character(.)))
 
 data_tsne <- left_join(data_tsne,countries[,c("iso3","region","name","incomeLevel")], by = c("main_object"="iso3")) %>%
-  select(main_object, Period, Region = region, Country=name, IncomeLevel = incomeLevel, everything())
+  select(main_object, Period, Region = region, Country=name, IncomeLevel = incomeLevel, everything(), -one_of(paste0("X",indicator_List_Proximity)))
 
  write.csv(data_tsne, "data/data_tsne.csv",row.names = FALSE)
 
 # 3. Call: .generateTSNE() which calls .prepare_data() which calls: .filter_datascope_data() and writes tsne_points.csv to disk
  library(tsne)
 .generateTSNE(data, periodMin = "1900", periodMax = "2100",
-                             num_iter = 400, max_num_neighbors = 20, num_epochs = 100)
+                             num_iter = 500, max_num_neighbors = 10, num_epochs = 100)
 
 #write.csv(tsne_points, "data/tsne_points.csv", row.names = FALSE)
+
+
