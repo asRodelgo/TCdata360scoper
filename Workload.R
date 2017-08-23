@@ -13,6 +13,15 @@ workload_TRS <- group_by(selectedTRS, TRS_Employee_Full_Name, TRS_FY, WBG_Projec
 
 write.csv(workload_TRS, "C:/Users/wb493327/Desktop/workload_TRS.csv", row.names = FALSE)
   
+##############
+# Why projects have so many different TTLs (Team Role == Team Lead) for a particular FY?
+
+thisProject <- filter(talent_EFI, WBG_Project_ID == "P097026", TRS_FY %in% c("FY14","FY15","FY16","FY17")) %>%
+  select(starts_with("TRS"), starts_with("WBG"), Team_Role, contains("Country")) %>%
+  distinct(TRS_FY,WBG_Project_Practice, .keep_all=TRUE)
+
+thisUPI <- filter(talent_EFI, TRS_Employee_UPI == "388192", TRS_FY %in% c("FY14","FY15","FY16","FY17")) %>%
+  select(starts_with("TRS"), starts_with("WBG"), Team_Role, contains("Fund"))
 
 
 
