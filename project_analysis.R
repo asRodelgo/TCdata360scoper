@@ -46,12 +46,12 @@ upiSkills <- merge(upiSkills,projectSkills, by = "Employee_UPI_9") %>%
 upiSkills2 <- merge(upiSkills,talent_EFI[,c("Employee_UPI_9","Employee_Full_Name")], by="Employee_UPI_9", all.x = TRUE) %>% 
   distinct(Employee_UPI_9,.keep_all=TRUE)
   
-#### Understanding the clusters -------------------------
-# group 1  
-filter(upiSkills2, grepl("cusolito|silva mendez|michel bellier|anael kayani|chenjerani|diletta dor|kalavakon|mneney|musoke muna|nistha sinha|tegwa",tolower(Employee_Full_Name)))  
-# group 2  
-filter(upiSkills2, grepl("mallari|de aguiar falco|nicholas menzies|meg dondog|imogen cara|apurva sanghi|pierre m. lenaud|grant wai-poi|miriam bensky|bronwyn grie|georgia harley",tolower(Employee_Full_Name)))    
-# group 3  
-filter(upiSkills2, grepl("aliyev|henry amena|karen grigorian|kisunko|robertus cornelis|luz maria meyer|abreu rojas|wangari kamau|fuente hoyes|crnomarkovic|kolie ousmane",tolower(Employee_Full_Name)))    
-
-filter(upiSkills2, grepl("85662|295924|257897",tolower(Employee_UPI_9)))
+# #### Understanding the clusters -------------------------
+# # group 1  
+# filter(upiSkills2, grepl("cusolito|silva mendez|michel bellier|anael kayani|chenjerani|diletta dor|kalavakon|mneney|musoke muna|nistha sinha|tegwa",tolower(Employee_Full_Name)))  
+# # group 2  
+# filter(upiSkills2, grepl("mallari|de aguiar falco|nicholas menzies|meg dondog|imogen cara|apurva sanghi|pierre m. lenaud|grant wai-poi|miriam bensky|bronwyn grie|georgia harley",tolower(Employee_Full_Name)))    
+# # group 3  
+# filter(upiSkills2, grepl("aliyev|henry amena|karen grigorian|kisunko|robertus cornelis|luz maria meyer|abreu rojas|wangari kamau|fuente hoyes|crnomarkovic|kolie ousmane",tolower(Employee_Full_Name)))    
+# 
+# filter(upiSkills2, grepl("85662|295924|257897",tolower(Employee_UPI_9)))
